@@ -1,0 +1,28 @@
+# Our security address
+Contact: mailto:security@bullfrogsec.com
+
+# Our security policy
+Policy: https://bullfrogsec.com/security
+
+# Our security acknowledgments page
+Canonical: https://bullfrogsec.com/.well-known/security.txt
+
+# Preferred languages for security reports
+Preferred-Languages: en
+
+# Our PGP key (if available, update this line)
+# Encryption: https://bullfrogsec.com/pgp-key.txt
+
+# Expiration date for this file (1 year from now)
+Expires: 2027-01-08T00:00:00.000Z
+
+# Additional information
+# We welcome security researchers and encourage responsible disclosure.
+# We commit to:
+# - Respond to your report within 24 hours
+# - Keep you informed of our progress throughout the investigation
+# - Credit you for the discovery (if desired) once the issue is resolved
+# - Not pursue legal action for good-faith security research
+#
+# Our agent code is fully open source and available at:
+# https://github.com/bullfrogsec/bullfrog
