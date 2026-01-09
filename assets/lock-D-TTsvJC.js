@@ -1,4 +1,4 @@
-import{c}from"./Footer-CZTWEHt8.js";/**
+import{c}from"./Footer-BqagX1kC.js";/**
  * @license lucide-react v0.487.0 - ISC
  *
  * This source code is licensed under the ISC license.
