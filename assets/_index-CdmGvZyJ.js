@@ -1,4 +1,4 @@
-import{p as e,v as y,w as u}from"./chunk-EPOLDU6W-BJBJZBMd.js";import{c as l,N as j,F as v,C as w}from"./Footer-k8ZmSrpi.js";import{L as N,S as b}from"./server-e-p2bvSO.js";import{A as p,X as f}from"./x-DpL1LRXy.js";import"./consent-C7ILcp24.js";/**
+import{p as e,v as y,w as u}from"./chunk-EPOLDU6W-BJBJZBMd.js";import{c as l,N as j,F as v,C as w}from"./Footer-CzjsbeJw.js";import{L as N,S as b}from"./server-ryZVbWgk.js";import{A as p,X as f}from"./x-BycTdG5C.js";import"./consent-C7ILcp24.js";/**
  * @license lucide-react v0.487.0 - ISC
  *
  * This source code is licensed under the ISC license.
