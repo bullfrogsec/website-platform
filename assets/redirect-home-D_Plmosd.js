@@ -1,0 +1,1 @@
+import{w as t,p as e,x as o}from"./chunk-EPOLDU6W-BJBJZBMd.js";const s=()=>[{title:"Bullfrog Security"},{httpEquiv:"refresh",content:"0; url=/"},{name:"robots",content:"noindex"}],c=()=>[{rel:"canonical",href:"https://bullfrogsec.com/"}],i=t(function(){return e.jsx(o,{to:"/",replace:!0})});export{i as default,c as links,s as meta};
