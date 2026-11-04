@@ -1,0 +1,262 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bullfrog Egress Control vs MITM proxies</title>
+  <meta name="description" content="Compare Bullfrog with MITM proxies: certificate trust, pinned clients, containers, payload handling, availability and process context. Inspect locally without an interception CA.">
+  
+  <link rel="canonical" href="https://bullfrogsec.com/compare/mitm-proxy">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Bullfrog">
+  <meta property="og:title" content="Bullfrog Egress Control vs MITM proxies">
+  <meta property="og:description" content="Compare Bullfrog with MITM proxies: certificate trust, pinned clients, containers, payload handling, availability and process context. Inspect locally without an interception CA.">
+  <meta property="og:url" content="https://bullfrogsec.com/compare/mitm-proxy">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bullfrog Egress Control vs MITM proxies">
+  <meta name="twitter:description" content="Compare Bullfrog with MITM proxies: certificate trust, pinned clients, containers, payload handling, availability and process context. Inspect locally without an interception CA.">
+  
+  <link rel="alternate" type="application/atom+xml" title="Bullfrog blog" href="/blog/feed.xml">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css?v=eff914a8fa79">
+  
+  <meta name="bullfrog:chatwoot-token" content="VPFeLjmU4EQCkYs67xiRiqYG">
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e238e68d369b4d7fb4decccc0a80d1b6"}'></script>
+  <script src="/assets/site.js?v=1dfbfd0dc402" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+  <nav class="wrap navigation" aria-label="Main navigation">
+    <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="29" height="29" alt=""><span>Bullfrog Security</span></a>
+    <div class="navigation-links">
+      <a href="/assessment">Assessment</a>
+      <a href="/training">Training</a>
+      <a href="/egress-control">Bullfrog Egress Control</a>
+      <a href="/blog">Blog</a>
+      <a href="/team">The team</a>
+    </div>
+    <a class="cta navigation-cta" href="mailto:info@bullfrogsec.com">Get in touch</a>
+    <details class="mobile-menu">
+      <summary>Menu 
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 8 4 4 4-4"/>
+  
+</svg>
+</summary>
+      <div class="dropdown">
+        <a href="/assessment">Assessment</a>
+        <a href="/training">Training</a>
+        <a href="/egress-control">Bullfrog Egress Control</a>
+        <a href="/blog">Blog</a>
+        <a href="/team">The team</a>
+        <a href="mailto:info@bullfrogsec.com">Get in touch</a>
+      </div>
+    </details>
+  </nav>
+</header>
+
+  <main id="main" tabindex="-1">
+<article class="document wrap comparison-page">
+  <h1>Bullfrog Egress Control vs MITM proxies</h1>
+  <div class="comparison-intro">
+    <p>To control what an AI agent sends out, you have to read its requests, and almost all of them are HTTPS. The usual way to do that is a man-in-the-middle proxy: a TLS-inspecting service that sits between your machines and the internet.</p>
+    <p>A proxy reads HTTPS by terminating the client’s TLS connection, decrypting the traffic, and establishing another encrypted connection to the destination. It presents a certificate of its own to the client. That only works if every inspected machine, runtime and container trusts its certificate authority, and their traffic passes through the proxy.</p>
+    <p>Bullfrog takes a different approach. It runs as a background service on the machine where your agents run, reads supported requests there, and blocks what your configured policy does not allow before it leaves. There is no interception certificate to trust, no separate customer proxy to deploy and no per-tool proxy routing to maintain.</p>
+  </div>
+
+  <section class="comparison-section" aria-labelledby="differences">
+    <h2 id="differences">How they differ</h2>
+    <div class="comparison-panels">
+      <figure class="comparison-panel" aria-labelledby="proxy-title">
+        <figcaption><h3 id="proxy-title">Man-in-the-middle proxy</h3></figcaption>
+        <div class="vertical-flow">
+          <div class="diagram-box"><strong>Your machine</strong><span>agents · curl · git · npm · pip</span><span class="trust-warning">Trusts the proxy’s CA</span></div>
+          
+  <div class="diagram-down"><span aria-hidden="true">↓</span><span>Encrypted, re-routed to the proxy</span></div>
+
+          <div class="diagram-box proxy-box"><strong>Proxy</strong><span>Decrypts, inspects, re-encrypts</span></div>
+          
+  <div class="diagram-down"><span aria-hidden="true">↓</span><span>Allowed requests</span></div>
+
+          <div class="diagram-box"><strong>Internet</strong></div>
+        </div>
+      </figure>
+      <figure class="comparison-panel" aria-labelledby="local-title">
+        <figcaption><h3 id="local-title">Bullfrog</h3></figcaption>
+        <div class="vertical-flow">
+          <div class="diagram-box local-machine" role="group" aria-labelledby="machine-title">
+            <strong id="machine-title">Your Linux machine</strong><span>agents · curl · git · npm · pip</span>
+            <div class="diagram-box bullfrog-box"><strong>Bullfrog</strong><span>Reads and judges supported requests, on the machine</span></div>
+          </div>
+          
+  <div class="diagram-down"><span aria-hidden="true">↓</span><span>Allowed requests to their destinations</span></div>
+
+          <div class="diagram-box"><strong>Internet</strong></div>
+        </div>
+        <p class="panel-note">Bullfrog management holds your policies and activity metadata. It is outside the application-traffic path.</p>
+      </figure>
+    </div>
+    <p class="comparison-scope">The proxy diagram shows a separate-proxy deployment. MITM proxies can also run locally; the interception-CA trust requirement remains.</p>
+  </section>
+
+  <section class="comparison-section" aria-labelledby="features">
+    <h2 id="features">Feature comparison</h2>
+    
+  <table class="feature-table" role="table">
+    <caption class="sr-only">Feature comparison: MITM proxy and Bullfrog</caption>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader" id="feature">Feature</th>
+        <th scope="col" role="columnheader" id="alternative">MITM proxy</th>
+        <th scope="col" role="columnheader" id="bullfrog">Bullfrog</th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-1">Certificates</th>
+        <td role="cell" headers="feature-1 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>Create, distribute, rotate, protect an interception CA</td>
+        <td role="cell" headers="feature-1 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>No interception CA to manage</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-2">Tools that pin their certificate</th>
+        <td role="cell" headers="feature-2 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>Can reject the proxy’s replacement certificate</td>
+        <td role="cell" headers="feature-2 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>No substituted certificate; supported TLS/tool coverage still applies</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-3">Runtimes with their own trust store</th>
+        <td role="cell" headers="feature-3 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>CA trust settings for each inspected runtime</td>
+        <td role="cell" headers="feature-3 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>No interception-CA trust settings</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-4">Code running in containers</th>
+        <td role="cell" headers="feature-4 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>CA trust through images or runtime configuration</td>
+        <td role="cell" headers="feature-4 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Supported container traffic inspected from the host</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-5">Who sees your payloads</th>
+        <td role="cell" headers="feature-5 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>Decrypted by the proxy</td>
+        <td role="cell" headers="feature-5 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Inspected locally; activity metadata reported centrally</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-6">In the critical path</th>
+        <td role="cell" headers="feature-6 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>Inspected traffic depends on the proxy</td>
+        <td role="cell" headers="feature-6 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Local enforcement; management outside the traffic path</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-7">Which process made the request</th>
+        <td role="cell" headers="feature-7 alternative"><span class="mobile-column-label" aria-hidden="true">MITM proxy</span>Requires additional endpoint context</td>
+        <td role="cell" headers="feature-7 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Process context collected on the host</td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  </section>
+
+  <section class="comparison-section" aria-labelledby="practice">
+    <h2 id="practice">What this means in practice</h2>
+    
+  <section class="practice">
+    <h3>Certificates</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>You run a certificate authority. You create it, install its trust certificate on each inspected client, rotate it, and protect its private key, which can impersonate websites to clients that trust it.</p></div>
+      <div><h4>With Bullfrog</h4><p>There is no interception certificate authority to manage. Install and enroll Bullfrog on a supported Linux machine and define its policy. You do not distribute a custom CA to your tools.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Tools that pin their certificate</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>Some tools only accept the certificate they expect. A pinned client can reject the proxy’s replacement certificate. Exempting it from interception restores connectivity, but also removes that inspection.</p></div>
+      <div><h4>With Bullfrog</h4><p>Bullfrog does not substitute the service’s certificate, so it does not introduce this certificate-pinning conflict. Inspection still depends on supported tools and TLS stacks, not just whether a connection succeeds.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Runtimes with their own trust store</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>Node, Python and Java do not always use the system’s certificates. Depending on the runtime and client library, you may need NODE_EXTRA_CA_CERTS, REQUESTS_CA_BUNDLE or a Java keystore. A new tool can mean another trust setting to maintain.</p></div>
+      <div><h4>With Bullfrog</h4><p>No interception-CA trust settings to configure. Bullfrog does not depend on which certificates a runtime trusts. Enrollment and request policy still apply, as does support for the runtime’s TLS stack.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Containers</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>Inspected container clients need to trust the proxy’s CA too, including clients in images you pull and do not build. You can supply that trust through the image or runtime configuration. Missing trust can cause certificate failures; bypassing the proxy removes inspection.</p></div>
+      <div><h4>With Bullfrog</h4><p>Supported container traffic is inspected from the host, without adding an interception CA to your images. Coverage depends on the tools and TLS stacks inside those containers; it is not automatic coverage of every container workload.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Who sees your payloads</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>Inspected requests are decrypted on the proxy, including the credentials and data they carry. The proxy becomes one of the most sensitive systems you run.</p></div>
+      <div><h4>With Bullfrog</h4><p>Requests are judged on the machine that sends them and do not leave it to be inspected elsewhere. Allowed requests still reach their destinations. Activity metadata is reported centrally; application traffic is not routed through Bullfrog management.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Availability</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>Traffic routed through the proxy depends on it. When that service is down or slow, the agents using it can be affected. A separate proxy adds another traffic-path service to operate.</p></div>
+      <div><h4>With Bullfrog</h4><p>Enforcement is local to each machine. Management is outside the application-traffic path, and an existing valid cached policy can continue locally during a management outage. Enrollment, policy updates and local-agent health still matter.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Knowing which process made the request</h3>
+    <div class="practice-pair">
+      <div><h4>With a proxy</h4><p>A network proxy sees a source IP and port. Distinguishing your agent from git or a package install on the same machine requires additional endpoint context.</p></div>
+      <div><h4>With Bullfrog</h4><p>Bullfrog collects process context on the host, alongside outbound activity and policy decisions. That gives you endpoint context for investigation without relying on a network address alone; attribution is not guaranteed for every verdict.</p></div>
+    </div>
+  </section>
+
+  </section>
+
+  <section class="comparison-section" aria-labelledby="deployment">
+    <h2 id="deployment">When a proxy still makes sense</h2>
+    <p class="comparison-copy">Bullfrog runs on supported Linux machines where your agents run. If you need to inspect traffic from machines you cannot install software on, a network-edge proxy may be a better fit, provided the clients can be routed through it and trust its CA. Bullfrog coverage depends on tools, TLS stacks, configured policy and enforcement mode.</p>
+  </section>
+  <p class="contact-line">Contact us at <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a></p>
+
+</article>
+</main>
+  <footer class="site-footer wrap">
+  <div class="footer-main">
+    <div>
+      <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="25" height="25" alt=""><span>Bullfrog Security</span></a>
+      <p>Security for AI agents.</p>
+      <p class="contact-line">Contact us at <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a></p>
+
+    </div>
+    <div><h2>Services</h2><a href="/assessment">Agent security assessment</a><a href="/training">Training</a></div>
+    <div><h2>Product</h2><a href="/egress-control">Bullfrog Egress Control</a></div>
+    <div><h2>Company</h2><a href="/team">The team</a><a href="/blog">Blog</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Bullfrog</span>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+  </div>
+  <noscript><p class="no-script-note">Chat is off without JavaScript. Contact <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a>.</p></noscript>
+</footer>
+
+  <button type="button" class="chat-launcher cta" data-chat hidden>Chat with us</button>
+</body>
+</html>

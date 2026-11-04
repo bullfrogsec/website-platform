@@ -1,0 +1,39 @@
+/* same-destination.njk */
+.connection-table { border: 1px solid #d9e3dc; border-radius: 10px; background: #fff; overflow: hidden; }
+.connection-row { display: grid; grid-template-columns: minmax(0,1fr) 160px 140px; gap: 16px; align-items: center; padding: 16px 20px; border-top: 1px solid #eaf0ec; }
+.connection-head { border-top: 0; padding-block: 10px; background: #f7faf8; color: var(--muted); font-size: 12px; font-weight: 600; }
+.connection-request strong { display: block; margin-bottom: 4px; font-size: 15px; font-weight: 550; }
+.connection-request code { display: block; color: #56665d; }
+.connection-method { font-weight: 700; color: var(--ink); }
+.connection-label { display: none; }
+
+/* campaigns.njk */
+.campaigns { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; padding: 0; margin: 0; list-style: none; }
+.campaign { display: flex; flex-direction: column; min-width: 0; }
+.campaign-date { position: relative; padding: 0 0 14px 18px; color: var(--muted); font-size: 13px; font-weight: 600; }
+.campaign-date::before { content: ''; position: absolute; left: 0; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--green); }
+.campaign .fig-box { flex: 1; }
+.campaign-destinations { display: grid; gap: 12px; padding: 14px 0 0; margin: 14px 0 0; border-top: 1px solid #e6ede8; list-style: none; }
+.campaign-destinations li { display: grid; justify-items: start; gap: 4px; }
+.campaign-destinations .fig-muted { font-size: 13px; line-height: 1.5; }
+
+/* shared-edge.njk */
+.edge { display: grid; grid-template-columns: minmax(0,1.1fr) 48px minmax(0,.85fr) 48px minmax(0,1.1fr); align-items: center; }
+.edge code { display: block; }
+.edge-layer { margin: 10px 0 2px; color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .8px; text-transform: uppercase; }
+.edge-encrypted { margin-top: 12px; padding: 2px 12px 10px; border: 1px dashed #b7c6bd; border-radius: 8px; background: #f7faf8; }
+.edge-cdn span { margin-top: 8px; }
+.edge-tenants { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+.edge-tenants .fig-box { padding: 10px 14px; }
+.edge-tenants code { white-space: nowrap; }
+.edge-tenants span { display: block; color: var(--body); font-size: 13px; }
+
+@media (max-width:760px) {
+  .connection-head { display: none; }
+  .connection-row { grid-template-columns: 1fr 1fr; gap: 10px 12px; padding: 14px; }
+  .connection-request { grid-column: 1 / -1; }
+  .connection-label { display: block; margin-bottom: 4px; color: var(--muted); font-size: 12px; }
+  .connection-row:nth-child(2) { border-top: 0; }
+  .campaigns { grid-template-columns: 1fr; }
+  .edge { grid-template-columns: 1fr; }
+}

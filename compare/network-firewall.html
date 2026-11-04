@@ -1,0 +1,263 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bullfrog Egress Control vs network firewalls</title>
+  <meta name="description" content="An allowed domain is not a data boundary. See how Bullfrog request policies block unauthorized writes that an IP or domain allowlist permits.">
+  
+  <link rel="canonical" href="https://bullfrogsec.com/compare/network-firewall">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Bullfrog">
+  <meta property="og:title" content="Bullfrog Egress Control vs network firewalls">
+  <meta property="og:description" content="An allowed domain is not a data boundary. See how Bullfrog request policies block unauthorized writes that an IP or domain allowlist permits.">
+  <meta property="og:url" content="https://bullfrogsec.com/compare/network-firewall">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bullfrog Egress Control vs network firewalls">
+  <meta name="twitter:description" content="An allowed domain is not a data boundary. See how Bullfrog request policies block unauthorized writes that an IP or domain allowlist permits.">
+  
+  <link rel="alternate" type="application/atom+xml" title="Bullfrog blog" href="/blog/feed.xml">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css?v=eff914a8fa79">
+  
+  <meta name="bullfrog:chatwoot-token" content="VPFeLjmU4EQCkYs67xiRiqYG">
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e238e68d369b4d7fb4decccc0a80d1b6"}'></script>
+  <script src="/assets/site.js?v=1dfbfd0dc402" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+  <nav class="wrap navigation" aria-label="Main navigation">
+    <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="29" height="29" alt=""><span>Bullfrog Security</span></a>
+    <div class="navigation-links">
+      <a href="/assessment">Assessment</a>
+      <a href="/training">Training</a>
+      <a href="/egress-control">Bullfrog Egress Control</a>
+      <a href="/blog">Blog</a>
+      <a href="/team">The team</a>
+    </div>
+    <a class="cta navigation-cta" href="mailto:info@bullfrogsec.com">Get in touch</a>
+    <details class="mobile-menu">
+      <summary>Menu 
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 8 4 4 4-4"/>
+  
+</svg>
+</summary>
+      <div class="dropdown">
+        <a href="/assessment">Assessment</a>
+        <a href="/training">Training</a>
+        <a href="/egress-control">Bullfrog Egress Control</a>
+        <a href="/blog">Blog</a>
+        <a href="/team">The team</a>
+        <a href="mailto:info@bullfrogsec.com">Get in touch</a>
+      </div>
+    </details>
+  </nav>
+</header>
+
+  <main id="main" tabindex="-1">
+<article class="document wrap comparison-page">
+  <h1>Bullfrog Egress Control vs network firewalls</h1>
+  <p class="document-lead">An allowed domain is not a data boundary.</p>
+  <div class="comparison-intro">
+    <p>AI agents need shared services like GitHub and package registries to do useful work. But allowing a service does not restrict which account they send data to or which operations they perform. An attacker can target a service your agent already uses.</p>
+    <p>Bullfrog applies your policy to the request, not just its destination. This comparison isolates <strong>IP/domain rules</strong>, not firewalls with their own L7 inspection.</p>
+  </div>
+
+  <section class="comparison-section" aria-labelledby="differences">
+    <h2 id="differences">How they differ</h2>
+    <div class="comparison-panels">
+      <figure class="comparison-panel alternative" aria-labelledby="firewall-title">
+        <figcaption>
+          <h3 id="firewall-title">IP/domain filtering</h3>
+          <p class="panel-note">Allow github.com and both requests get through, including the one to the attacker’s repository.</p>
+        </figcaption>
+        
+  <div class="network-flow">
+    <div class="flow-node flow-source"><strong>AI agent</strong></div>
+    <div class="path-pair request-paths">
+      
+  <div class="flow-arrow request-path" role="img" aria-label="POST github.com/&lt;your-org&gt;/&lt;repo&gt; to the control">
+    <span class="flow-label" aria-hidden="true"><code><span class="request-method">POST </span><span class="request-host">github.com/</span><span class="trusted">&lt;your-org&gt;</span>/<wbr><span class="placeholder">&lt;repo&gt;</span></code></span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+      
+  <div class="flow-arrow request-path" role="img" aria-label="POST github.com/&lt;attacker&gt;/&lt;repo&gt; to the control">
+    <span class="flow-label" aria-hidden="true"><code><span class="request-method">POST </span><span class="request-host">github.com/</span><span class="attacker">&lt;attacker&gt;</span>/<wbr><span class="placeholder">&lt;repo&gt;</span></code></span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+    </div>
+    <div class="flow-node flow-control"><strong>Firewall</strong><span>Filters IPs and domains</span></div>
+    <div class="path-pair outcomes">
+      
+  <div class="flow-arrow flow-approved" role="img" aria-label="Your organization: Allowed to destination">
+    <span class="flow-label" aria-hidden="true">Allowed</span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+      
+  <div class="flow-arrow flow-danger" role="img" aria-label="Attacker’s repository: Allowed to destination">
+    <span class="flow-label" aria-hidden="true">Allowed</span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+    </div>
+    <div class="flow-node flow-destination"><code>github.com</code></div>
+  </div>
+
+      </figure>
+      <figure class="comparison-panel bullfrog-flow" aria-labelledby="bullfrog-title">
+        <figcaption>
+          <h3 id="bullfrog-title">Bullfrog request policy</h3>
+          <p class="panel-note">With a policy allowing only your organization, the attacker’s request stops at Bullfrog.</p>
+        </figcaption>
+        
+  <div class="network-flow">
+    <div class="flow-node flow-source"><strong>AI agent</strong></div>
+    <div class="path-pair request-paths">
+      
+  <div class="flow-arrow request-path" role="img" aria-label="POST github.com/&lt;your-org&gt;/&lt;repo&gt; to the control">
+    <span class="flow-label" aria-hidden="true"><code><span class="request-method">POST </span><span class="request-host">github.com/</span><span class="trusted">&lt;your-org&gt;</span>/<wbr><span class="placeholder">&lt;repo&gt;</span></code></span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+      
+  <div class="flow-arrow request-path" role="img" aria-label="POST github.com/&lt;attacker&gt;/&lt;repo&gt; to the control">
+    <span class="flow-label" aria-hidden="true"><code><span class="request-method">POST </span><span class="request-host">github.com/</span><span class="attacker">&lt;attacker&gt;</span>/<wbr><span class="placeholder">&lt;repo&gt;</span></code></span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+    </div>
+    <div class="flow-node flow-control"><strong>Bullfrog</strong><span>Inspects requests</span></div>
+    <div class="path-pair outcomes">
+      
+  <div class="flow-arrow flow-approved" role="img" aria-label="Your organization: Allowed to destination">
+    <span class="flow-label" aria-hidden="true">Allowed</span>
+    <span class="flow-line" aria-hidden="true"></span>
+  </div>
+
+      
+  <div class="flow-arrow flow-danger flow-blocked" role="img" aria-label="Attacker’s repository: Blocked. Not sent.">
+    <span class="flow-label" aria-hidden="true">Blocked</span>
+    <span class="flow-line" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+</span>
+  </div>
+
+    </div>
+    <div class="flow-node flow-destination"><code>github.com</code></div>
+  </div>
+
+      </figure>
+    </div>
+  </section>
+
+  <section class="comparison-section" aria-labelledby="features">
+    <h2 id="features">Feature comparison</h2>
+    
+  <table class="feature-table" role="table">
+    <caption class="sr-only">Feature comparison: IP/domain rules and Bullfrog</caption>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th scope="col" role="columnheader" id="feature">Feature</th>
+        <th scope="col" role="columnheader" id="alternative">IP/domain rules</th>
+        <th scope="col" role="columnheader" id="bullfrog">Bullfrog</th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-1">Destination restrictions</th>
+        <td role="cell" headers="feature-1 alternative"><span class="mobile-column-label" aria-hidden="true">IP/domain rules</span>Allow or block destination IPs or domains</td>
+        <td role="cell" headers="feature-1 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Restrict destinations and apply request policy</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-2">Accounts and repositories within a service</th>
+        <td role="cell" headers="feature-2 alternative"><span class="mobile-column-label" aria-hidden="true">IP/domain rules</span>Same address, no account distinction</td>
+        <td role="cell" headers="feature-2 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Match supported request paths and fields to approved accounts</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-3">Read versus write operations</th>
+        <td role="cell" headers="feature-3 alternative"><span class="mobile-column-label" aria-hidden="true">IP/domain rules</span>Same address, no operation distinction</td>
+        <td role="cell" headers="feature-3 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Allow useful reads and restrict writes with configured rules</td>
+      </tr>
+      
+      <tr role="row">
+        <th scope="row" role="rowheader" id="feature-4">Remote MCP tool calls</th>
+        <td role="cell" headers="feature-4 alternative"><span class="mobile-column-label" aria-hidden="true">IP/domain rules</span>Shared endpoint, no tool-call distinction</td>
+        <td role="cell" headers="feature-4 bullfrog"><span class="mobile-column-label" aria-hidden="true">Bullfrog</span>Match tool names and arguments in supported remote MCP requests</td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+  </section>
+
+  <section class="comparison-section" aria-labelledby="practice">
+    <h2 id="practice">What this means in practice</h2>
+    
+  <section class="practice">
+    <h3>Same service. Different account.</h3>
+    <div class="practice-pair">
+      <div><h4>With IP/domain rules</h4><p>Your organization’s repository and an attacker’s repository can share github.com. Allowing the domain permits access to both. Address rules alone cannot decide which repository may receive your data.</p></div>
+      <div><h4>With Bullfrog</h4><p>Configure request rules that allow writes to your approved organization and block writes elsewhere. Agents retain useful access to the service without permission to send data to every account on it.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>Allow useful reads. Block unauthorized writes.</h3>
+    <div class="practice-pair">
+      <div><h4>With IP/domain rules</h4><p>Downloading a dependency and publishing a package can use the same registry. The destination address does not tell you whether the agent is reading public data or uploading your code.</p></div>
+      <div><h4>With Bullfrog</h4><p>Use request methods, paths and supported fields to distinguish operations. For example, allow package downloads while blocking publishing requests. These are configured service rules, not automatic classification of sensitive data.</p></div>
+    </div>
+  </section>
+
+    
+  <section class="practice">
+    <h3>One MCP endpoint. Different tools.</h3>
+    <div class="practice-pair">
+      <div><h4>With IP/domain rules</h4><p>Remote MCP tools can share one HTTPS endpoint. Allowing that endpoint does not distinguish a read-only tool from a tool that creates an issue or sends data to another account.</p></div>
+      <div><h4>With Bullfrog</h4><p>Match tool names and arguments in supported remote MCP requests. A configured policy can permit read tools while blocking create_issue or restricting its target repository. This applies to remote MCP traffic, not local stdio tool calls.</p></div>
+    </div>
+  </section>
+
+  </section>
+
+  <p class="comparison-scope">Bullfrog complements network controls: keep destination restrictions and add request-level boundaries. Coverage depends on supported tools, TLS stacks, protocols, configured policy and enforcement mode.</p>
+  <p class="contact-line">Contact us at <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a></p>
+
+</article>
+</main>
+  <footer class="site-footer wrap">
+  <div class="footer-main">
+    <div>
+      <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="25" height="25" alt=""><span>Bullfrog Security</span></a>
+      <p>Security for AI agents.</p>
+      <p class="contact-line">Contact us at <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a></p>
+
+    </div>
+    <div><h2>Services</h2><a href="/assessment">Agent security assessment</a><a href="/training">Training</a></div>
+    <div><h2>Product</h2><a href="/egress-control">Bullfrog Egress Control</a></div>
+    <div><h2>Company</h2><a href="/team">The team</a><a href="/blog">Blog</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Bullfrog</span>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+  </div>
+  <noscript><p class="no-script-note">Chat is off without JavaScript. Contact <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a>.</p></noscript>
+</footer>
+
+  <button type="button" class="chat-launcher cta" data-chat hidden>Chat with us</button>
+</body>
+</html>

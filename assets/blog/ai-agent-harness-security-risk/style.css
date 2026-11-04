@@ -1,0 +1,101 @@
+/* arch-macro.njk: a vertical flowchart; the back arrow runs up the right side. */
+.flow { --box: 72px; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,340px) 56px minmax(0,1fr); grid-template-rows: auto 28px var(--box) 28px 52px 36px var(--box) 28px var(--box); justify-content: center; }
+.flow > * { grid-column: 2; }
+.flow-start { grid-row: 1; justify-self: center; }
+.flow-r2 { grid-row: 2; } .flow-r4 { grid-row: 4; } .flow-r6 { grid-row: 6; } .flow-r8 { grid-row: 8; }
+.flow-ask { grid-row: 3; } .flow-check { grid-row: 5; } .flow-run { grid-row: 7; } .flow-add { grid-row: 9; }
+.flow-step { display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 10px 16px; }
+.flow-step > span { font-size: 13px !important; margin-top: 2px !important; }
+.flow-acts { color: var(--green-text) !important; font-weight: 600; }
+.flow-ask { border-color: var(--line-strong); }
+.flow-down { position: relative; justify-self: center; width: 2px; background: var(--line-strong); }
+.flow-down::after { content: ''; position: absolute; bottom: -1px; left: -5px; border: 6px solid transparent; border-top: 8px solid var(--line-strong); border-bottom: 0; }
+.flow-down span { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 12px; font-weight: 600; }
+.flow-check { display: flex; align-items: center; justify-content: center; justify-self: center; width: 180px; border: 1.5px solid var(--line-strong); border-radius: 26px; background: #fff; font-size: 14px; }
+/* "yes" branch to the left of the check, into the answer box. */
+.flow-yes { grid-row: 5; grid-column: 2; justify-self: start; align-self: center; position: relative; width: 120px; height: 2px; margin-left: -40px; background: var(--line-strong); }
+.flow-yes span { position: absolute; top: -20px; right: 44px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.flow-yes i::after { content: ''; position: absolute; left: -2px; top: -5px; border: 6px solid transparent; border-right: 8px solid var(--line-strong); border-left: 0; }
+.flow-answer { grid-row: 5; grid-column: 1; align-self: center; justify-self: end; max-width: 170px; margin-right: 44px; padding: 10px 14px; text-align: center; }
+@media (max-width:760px) {
+  .flow { grid-template-columns: 0 minmax(0,1fr) 40px 0; grid-template-rows: auto 28px var(--box) 28px 52px 36px var(--box) 28px var(--box) 20px auto; }
+  .flow-yes { display: none; }
+  .flow-answer { grid-row: 11; grid-column: 2; justify-self: center; margin: 0; max-width: none; }
+  .flow-answer::before { content: 'When the task is done: '; font-weight: 400; color: var(--muted); }
+}
+
+/* Back arrow: out of "Add the result" on the right, up, and into "Ask the model". */
+.flow-back { grid-row: 3 / 10; grid-column: 3; margin: calc(var(--box) / 2) 0 calc(var(--box) / 2) 0; border: 2px solid var(--line-strong); border-left: 0; border-radius: 0 10px 10px 0; position: relative; width: 28px; }
+.flow-back::before { content: ''; position: absolute; top: -7px; left: -2px; border: 6px solid transparent; border-right: 8px solid var(--line-strong); border-left: 0; }
+.flow-back::after { content: 'repeat'; position: absolute; top: 50%; left: 34px; transform: translateY(-50%) rotate(90deg); transform-origin: left center; color: var(--muted); font-size: 12px; font-weight: 600; }
+
+/* where.njk */
+.where { display: grid; grid-template-columns: minmax(0,1fr) minmax(120px,.7fr) minmax(0,1fr); align-items: center; gap: 0 16px; }
+.where-zone { padding: 16px; border: 1px dashed #b7c6bd; border-radius: var(--radius-lg); background: #fff8; }
+.where-label { margin-bottom: 10px; color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .6px; text-transform: uppercase; }
+.where-access { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+.where-access li { padding: 3px 10px; border-radius: 999px; background: var(--green-tint); color: var(--green-text); font-size: 12px; font-weight: 600; }
+.where-note { margin-top: 12px; color: var(--muted); font-size: 13px; }
+.where-links { display: grid; gap: 24px; }
+.where-link { display: grid; justify-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+.where-link i { position: relative; width: 100%; height: 2px; background: var(--line-strong); }
+.where-link i::after { content: ''; position: absolute; top: -5px; border: 6px solid transparent; }
+.where-right i::after { right: -2px; border-left: 8px solid var(--line-strong); border-right: 0; }
+.where-left i::after { left: -2px; border-right: 8px solid var(--line-strong); border-left: 0; }
+
+/* layers.njk */
+.layers { border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; }
+.layer { display: grid; grid-template-columns: 170px minmax(0,1fr) 150px 150px; gap: 16px; align-items: center; padding: 12px 18px; border-top: 1px solid var(--line-soft); font-size: 14px; }
+.layer strong { font-weight: 600; }
+.layer-head { border-top: 0; padding-block: 10px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.layer > span:last-child { font-size: 13px; }
+.layer-src { color: var(--muted); }
+.layer-src a { color: inherit; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 2px; }
+.layer-src a:hover { color: var(--green-text); }
+.layer-stage { padding: 14px 18px 6px; border-top: 1px solid var(--line); background: var(--tint); color: var(--green-text); font-size: 11px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; }
+
+/* trace-macro.njk */
+.trace { border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; }
+.trace-row { display: grid; grid-template-columns: 24px minmax(0,1.3fr) minmax(0,1fr) minmax(0,.9fr); gap: 16px; align-items: start; padding: 14px 18px; border-top: 1px solid var(--line-soft); }
+.ctx { display: grid; gap: 4px; margin: 0; }
+.ctx-item { padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--tint); color: var(--body); font-size: 12px; line-height: 1.45; }
+.ctx-new { border-color: var(--green-line); background: var(--green-tint); color: var(--ink); }
+.ctx-item b { display: block; color: var(--muted); font-size: 10.5px; font-weight: 650; letter-spacing: .5px; text-transform: uppercase; }
+.ctx-new b::after { content: ' · new'; color: var(--green-text); }
+.ctx-bad b { color: var(--red); }
+.ctx-injected { border-color: var(--red-line); }
+.ctx-inject { color: var(--red); font-weight: 600; }
+.ctx-bad { border-color: var(--red-line); background: var(--red-tint); color: var(--red); }
+.trace-head { border-top: 0; padding-block: 10px; color: var(--muted); font-size: 12px; font-weight: 600; }
+.trace-row code { color: var(--ink); }
+.trace-n { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; font-size: 12px; font-weight: 700; }
+.trace-bad { background: var(--red-wash); box-shadow: inset 3px 0 0 var(--red); }
+.trace-bad .trace-n { background: var(--red); }
+.trace-bad > div:last-child { color: var(--red); font-weight: 600; }
+.trace-label { display: none; }
+
+@media (max-width:760px) {
+  .trace-head { display: none; }
+  .trace-row { grid-template-columns: 22px minmax(0,1fr); gap: 10px 12px; padding: 14px; }
+  .trace-row > div { grid-column: 2; }
+  .trace-label { display: block; margin-bottom: 2px; color: var(--muted); font-size: 12px; }
+  .loop-line { padding: 8px 14px; }
+  .loop-line code { font-size: 14px !important; }
+}
+.trace .fig-attacker { white-space: normal; }
+
+@media (max-width:760px) {
+  .where { grid-template-columns: 1fr; gap: 12px; }
+  .where-link i { width: 2px; height: 28px; }
+  .where-right i::after { right: -5px; top: auto; bottom: -2px; border: 6px solid transparent; border-top: 8px solid var(--line-strong); border-bottom: 0; }
+  .where-left i::after { left: -5px; top: -2px; border: 6px solid transparent; border-bottom: 8px solid var(--line-strong); border-top: 0; }
+  .where-links { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width:760px) {
+  .layer-head { display: none; }
+  .layer { grid-template-columns: 1fr auto; gap: 4px 12px; }
+  .layer > span:nth-child(2) { grid-column: 1 / -1; grid-row: 2; }
+  .layer > span:nth-child(3) { grid-column: 2; grid-row: 1; }
+  .layer > span:last-child { grid-column: 1 / -1; }
+}

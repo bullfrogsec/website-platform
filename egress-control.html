@@ -1,0 +1,612 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bullfrog Egress Control</title>
+  <meta name="description" content="An outbound policy per AI agent, judged before anything leaves. For agents that can run commands, execute code or open web pages.">
+  
+  <link rel="canonical" href="https://bullfrogsec.com/egress-control">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Bullfrog">
+  <meta property="og:title" content="Bullfrog Egress Control">
+  <meta property="og:description" content="An outbound policy per AI agent, judged before anything leaves. For agents that can run commands, execute code or open web pages.">
+  <meta property="og:url" content="https://bullfrogsec.com/egress-control">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Bullfrog Egress Control">
+  <meta name="twitter:description" content="An outbound policy per AI agent, judged before anything leaves. For agents that can run commands, execute code or open web pages.">
+  
+  <link rel="alternate" type="application/atom+xml" title="Bullfrog blog" href="/blog/feed.xml">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/site.css?v=eff914a8fa79">
+  
+  <meta name="bullfrog:chatwoot-token" content="VPFeLjmU4EQCkYs67xiRiqYG">
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "e238e68d369b4d7fb4decccc0a80d1b6"}'></script>
+  <script src="/assets/site.js?v=1dfbfd0dc402" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+  <nav class="wrap navigation" aria-label="Main navigation">
+    <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="29" height="29" alt=""><span>Bullfrog Security</span></a>
+    <div class="navigation-links">
+      <a href="/assessment">Assessment</a>
+      <a href="/training">Training</a>
+      <a href="/egress-control" aria-current="page">Bullfrog Egress Control</a>
+      <a href="/blog">Blog</a>
+      <a href="/team">The team</a>
+    </div>
+    <a class="cta navigation-cta" href="mailto:info@bullfrogsec.com">Get in touch</a>
+    <details class="mobile-menu">
+      <summary>Menu 
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 8 4 4 4-4"/>
+  
+</svg>
+</summary>
+      <div class="dropdown">
+        <a href="/assessment">Assessment</a>
+        <a href="/training">Training</a>
+        <a href="/egress-control">Bullfrog Egress Control</a>
+        <a href="/blog">Blog</a>
+        <a href="/team">The team</a>
+        <a href="mailto:info@bullfrogsec.com">Get in touch</a>
+      </div>
+    </details>
+  </nav>
+</header>
+
+  <main id="main" tabindex="-1">
+  <section class="page-intro wrap" id="requests" aria-labelledby="page-title">
+    <p class="category">Product</p>
+    <h1 id="page-title">Bullfrog Egress Control</h1>
+    <p class="page-subtitle">An outbound policy for every agent.</p>
+    <div id="policy-explanation">
+      <p class="document-lead">Can your agent run a command, execute code or open a web page? Then any request it makes is a possible way out for your data.</p>
+      <p class="document-lead">Bullfrog judges every request before it leaves.</p>
+    </div>
+    <div class="requests" role="group" aria-label="Example outbound request and remote MCP tool-call decisions under a configured policy" aria-describedby="policy-explanation">
+      <div class="requests-header">
+        <span class="panel-symbol" aria-hidden="true"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="23" height="23" alt=""></span>
+        <h2 id="policy-title">Outbound requests</h2><code>agents-prod-01</code>
+      </div>
+      <div class="requests-body">
+        
+  <article class="request">
+    <span class="request-symbol" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M10 3v9m-3-3 3 3 3-3M4 13v4h12v-4"/>
+  
+</svg>
+</span>
+    <div class="request-copy">
+      <div class="request-heading"><h4>Install a package</h4></div>
+      <div class="request-meta"><code><span class="method">GET</span> registry.npmjs.org/express</code></div>
+    </div>
+    <span class="process">npm</span>
+    <span class="status allow">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span>
+  </article>
+
+        
+  <article class="request">
+    <span class="request-symbol" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <circle cx="5" cy="4" r="2"/><circle cx="5" cy="16" r="2"/><circle cx="15" cy="16" r="2"/><path d="M5 6v8m10 0V8a4 4 0 0 0-4-4H9m2-2L9 4l2 2"/>
+  
+</svg>
+</span>
+    <div class="request-copy">
+      <div class="request-heading"><h4>Open a pull request in your organization</h4></div>
+      <div class="request-meta"><code><span class="method">POST</span> api.github.com/repos/<span class="trusted">&lt;your-org&gt;</span>/&lt;your-repo&gt;/pulls</code></div>
+    </div>
+    <span class="process">gh</span>
+    <span class="status allow">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span>
+  </article>
+
+        
+  <article class="request">
+    <span class="request-symbol" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M3 4h14v9H8l-4 3v-3H3V4Z"/><path d="M6.5 8.5h7M6.5 11h4"/>
+  
+</svg>
+</span>
+    <div class="request-copy">
+      <div class="request-heading"><h4>Call the model with your company’s key</h4></div>
+      <div class="request-meta"><code><span class="request-endpoint"><span class="method">POST</span> api.anthropic.com/v1/messages</span><span class="request-identity">API key · <span class="trusted">&lt;your-org&gt;</span></span></code></div>
+    </div>
+    <span class="process">python</span>
+    <span class="status allow">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allowed</span>
+  </article>
+
+        
+  <article class="request denied">
+    <span class="request-symbol" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M3 4h14v9H8l-4 3v-3H3V4Z"/><path d="M6.5 8.5h7M6.5 11h4"/>
+  
+</svg>
+</span>
+    <div class="request-copy">
+      <div class="request-heading"><h4>Call the model with a key you don’t own</h4></div>
+      <div class="request-meta"><code><span class="request-endpoint"><span class="method">POST</span> api.anthropic.com/v1/messages</span><span class="request-identity">API key · <span class="attacker">&lt;other-org&gt;</span></span></code></div>
+    </div>
+    <span class="process">python</span>
+    <span class="status block">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Blocked</span>
+  </article>
+
+        
+  <article class="request denied">
+    <span class="request-symbol" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <rect x="3" y="3" width="5" height="5" rx="1"/><rect x="12" y="12" width="5" height="5" rx="1"/><path d="M8 5.5h6.5V12M5.5 8v6.5H12"/>
+  
+</svg>
+</span>
+    <div class="request-copy">
+      <div class="request-heading"><h4>Create an issue in another organization via MCP</h4></div>
+      <div class="request-meta"><code><span class="request-endpoint"><span class="method">POST</span> api.githubcopilot.com/mcp</span><span class="request-identity">MCP tools/call · <strong>create_issue</strong> · <span class="attacker">&lt;other-org&gt;</span></span></code></div>
+    </div>
+    <span class="process">Claude Code</span>
+    <span class="status block">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Blocked</span>
+  </article>
+
+        
+  <article class="request denied">
+    <span class="request-symbol" aria-hidden="true">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M10 12V3m-3 3 3-3 3 3M4 13v4h12v-4"/>
+  
+</svg>
+</span>
+    <div class="request-copy">
+      <div class="request-heading"><h4>Upload to a bucket you don’t own</h4></div>
+      <div class="request-meta"><code><span class="method">PUT</span> s3.amazonaws.com/<span class="attacker">&lt;external-bucket&gt;</span>/export.csv</code></div>
+    </div>
+    <span class="process">aws</span>
+    <span class="status block">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Blocked</span>
+  </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="how-it-works" aria-labelledby="steps-title">
+    <h2 id="steps-title" class="section-heading"><span>Map it.</span> <span>Decide it.</span> <span>Enforce it.</span></h2>
+    <ol class="steps-row three">
+      <li>
+        <h3>Map</h3>
+        <p>Start in audit mode. See every destination your agents reach, sorted into your accounts, shared services, and destinations seen for the first time.</p>
+      </li>
+      <li>
+        <h3>Decide</h3>
+        <p>Add an integration for each service your agents use and lock it to your accounts and keys.</p>
+      </li>
+      <li>
+        <h3>Enforce</h3>
+        <p>Every request is judged before it leaves. Anything not allowed is blocked and logged with the process that made it.</p>
+      </li>
+    </ol>
+  </section>
+
+  
+  <section class="section wrap" id="integrations" aria-labelledby="integrations-title">
+    <h2 id="integrations-title" class="section-heading"><span>Start from the services</span> <span>your agents already use.</span></h2>
+    <p class="section-copy">The integrations catalog bundles what each service needs: the domains to allow, the requests to inspect, and where writes may go. Pick an integration, name your accounts, and your agents can work with the service without it becoming a way out for your data.</p>
+    <ul class="integrations-grid" aria-label="Services in the integrations catalog">
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="m23.6004 9.5927-.0337-.0862L20.3.9814a.851.851 0 0 0-.3362-.405.8748.8748 0 0 0-.9997.0539.8748.8748 0 0 0-.29.4399l-2.2055 6.748H7.5375l-2.2057-6.748a.8573.8573 0 0 0-.29-.4412.8748.8748 0 0 0-.9997-.0537.8585.8585 0 0 0-.3362.4049L.4332 9.5015l-.0325.0862a6.0657 6.0657 0 0 0 2.0119 7.0105l.0113.0087.03.0213 4.976 3.7264 2.462 1.8633 1.4995 1.1321a1.0085 1.0085 0 0 0 1.2197 0l1.4995-1.1321 2.4619-1.8633 5.006-3.7489.0125-.01a6.0682 6.0682 0 0 0 2.0094-7.003z"/></svg><span>GitLab</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M0 0v11.408h11.408V0zm12.594 0v11.408H24V0zM0 12.594V24h11.408V12.594zm12.594 0V24H24V12.594z"/></svg><span>Microsoft 365</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M22.379 23.343a1.62 1.62 0 0 0 1.536-2.14v.002L17.35 1.76A1.62 1.62 0 0 0 15.816.657H8.184A1.62 1.62 0 0 0 6.65 1.76L.086 21.204a1.62 1.62 0 0 0 1.536 2.139h4.741a1.62 1.62 0 0 0 1.535-1.103l.977-2.892 4.947 3.675c.28.208.618.32.966.32m-3.084-12.531 3.624 10.739a.54.54 0 0 1-.51.713v-.001h-.03a.54.54 0 0 1-.322-.106l-9.287-6.9h4.853m6.313 7.006c.116-.326.13-.694.007-1.058L9.79 1.76a1.722 1.722 0 0 0-.007-.02h6.034a.54.54 0 0 1 .512.366l6.562 19.445a.54.54 0 0 1-.338.684"/></svg><span>Microsoft Azure</span></li>
+      
+      <li class="integration"><span>AWS</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12.19 2.38a9.344 9.344 0 0 0-9.234 6.893c.053-.02-.055.013 0 0-3.875 2.551-3.922 8.11-.247 10.941l.006-.007-.007.03a6.717 6.717 0 0 0 4.077 1.356h5.173l.03.03h5.192c6.687.053 9.376-8.605 3.835-12.35a9.365 9.365 0 0 0-2.821-4.552l-.043.043.006-.05A9.344 9.344 0 0 0 12.19 2.38zm-.358 4.146c1.244-.04 2.518.368 3.486 1.15a5.186 5.186 0 0 1 1.862 4.078v.518c3.53-.07 3.53 5.262 0 5.193h-5.193l-.008.009v-.04H6.785a2.59 2.59 0 0 1-1.067-.23h.001a2.597 2.597 0 1 1 3.437-3.437l3.013-3.012A6.747 6.747 0 0 0 8.11 8.24c.018-.01.04-.026.054-.023a5.186 5.186 0 0 1 3.67-1.69z"/></svg><span>Google Cloud</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M7.12 11.084a.683.683 0 00-1.16.126L.075 22.974a.703.703 0 00.63 1.018h8.19a.678.678 0 00.63-.39c1.767-3.65.696-9.203-2.406-12.52zM11.434.386a15.515 15.515 0 00-.906 15.317l3.95 7.9a.703.703 0 00.628.388h8.19a.703.703 0 00.63-1.017L12.63.38a.664.664 0 00-1.196.006z"/></svg><span>Atlassian</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M10.006 5.415a4.195 4.195 0 013.045-1.306c1.56 0 2.954.9 3.69 2.205.63-.3 1.35-.45 2.1-.45 2.85 0 5.159 2.34 5.159 5.22s-2.31 5.22-5.176 5.22c-.345 0-.69-.044-1.02-.104a3.75 3.75 0 01-3.3 1.95c-.6 0-1.155-.15-1.65-.375A4.314 4.314 0 018.88 20.4a4.302 4.302 0 01-4.05-2.82c-.27.062-.54.076-.825.076-2.204 0-4.005-1.8-4.005-4.05 0-1.5.811-2.805 2.01-3.51-.255-.57-.39-1.2-.39-1.846 0-2.58 2.1-4.65 4.65-4.65 1.53 0 2.85.705 3.72 1.8"/></svg><span>Salesforce</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="m12 1.608 12 20.784H0Z"/></svg><span>Vercel</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M11.9 1.036c-.015-.986-1.26-1.41-1.874-.637L.764 12.05C-.33 13.427.65 15.455 2.409 15.455h9.579l.113 7.51c.014.985 1.259 1.408 1.873.636l9.262-11.653c1.093-1.375.113-3.403-1.645-3.403h-9.642z"/></svg><span>Supabase</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M24 0V24l-9.365-8.045V24H0V0ZM2.942 21.087h8.751V9.563l9.365 8.204V2.919L2.942 2.914Z"/></svg><span>Neon</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M17.193 9.555c-1.264-5.58-4.252-7.414-4.573-8.115-.28-.394-.53-.954-.735-1.44-.036.495-.055.685-.523 1.184-.723.566-4.438 3.682-4.74 10.02-.282 5.912 4.27 9.435 4.888 9.884l.07.05A73.49 73.49 0 0111.91 24h.481c.114-1.032.284-2.056.51-3.07.417-.296.604-.463.85-.693a11.342 11.342 0 003.639-8.464c.01-.814-.103-1.662-.197-2.218zm-5.336 8.195s0-8.291.275-8.29c.213 0 .49 10.695.49 10.695-.381-.045-.765-1.76-.765-2.405z"/></svg><span>MongoDB Atlas</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M13.91 2.505c-.873-1.448-2.972-1.448-3.844 0L6.904 7.92a15.478 15.478 0 0 1 8.53 12.811h-2.221A13.301 13.301 0 0 0 5.784 9.814l-2.926 5.06a7.65 7.65 0 0 1 4.435 5.848H2.194a.365.365 0 0 1-.298-.534l1.413-2.402a5.16 5.16 0 0 0-1.614-.913L.296 19.275a2.182 2.182 0 0 0 .812 2.999 2.24 2.24 0 0 0 1.086.288h6.983a9.322 9.322 0 0 0-3.845-8.318l1.11-1.922a11.47 11.47 0 0 1 4.95 10.24h5.915a17.242 17.242 0 0 0-7.885-15.28l2.244-3.845a.37.37 0 0 1 .504-.13c.255.14 9.75 16.708 9.928 16.9a.365.365 0 0 1-.327.543h-2.287c.029.612.029 1.223 0 1.831h2.297a2.206 2.206 0 0 0 1.922-3.31z"/></svg><span>Sentry</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M19.57 17.04l-1.997-1.316-1.665 2.782-1.937-.567-1.706 2.604.087.82 9.274-1.71-.538-5.794zm-8.649-2.498l1.488-.204c.241.108.409.15.697.223.45.117.97.23 1.741-.16.18-.088.553-.43.704-.625l6.096-1.106.622 7.527-10.444 1.882zm11.325-2.712l-.602.115L20.488 0 .789 2.285l2.427 19.693 2.306-.334c-.184-.263-.471-.581-.96-.989-.68-.564-.44-1.522-.039-2.127.53-1.022 3.26-2.322 3.106-3.956-.056-.594-.15-1.368-.702-1.898-.02.22.017.432.017.432s-.227-.289-.34-.683c-.112-.15-.2-.199-.319-.4-.085.233-.073.503-.073.503s-.186-.437-.216-.807c-.11.166-.137.48-.137.48s-.241-.69-.186-1.062c-.11-.323-.436-.965-.343-2.424.6.421 1.924.321 2.44-.439.171-.251.288-.939-.086-2.293-.24-.868-.835-2.16-1.066-2.651l-.028.02c.122.395.374 1.223.47 1.625.293 1.218.372 1.642.234 2.204-.116.488-.397.808-1.107 1.165-.71.358-1.653-.514-1.713-.562-.69-.55-1.224-1.447-1.284-1.883-.062-.477.275-.763.445-1.153-.243.07-.514.192-.514.192s.323-.334.722-.624c.165-.109.262-.178.436-.323a9.762 9.762 0 0 0-.456.003s.42-.227.855-.392c-.318-.014-.623-.003-.623-.003s.937-.419 1.678-.727c.509-.208 1.006-.147 1.286.257.367.53.752.817 1.569.996.501-.223.653-.337 1.284-.509.554-.61.99-.688.99-.688s-.216.198-.274.51c.314-.249.66-.455.66-.455s-.134.164-.259.426l.03.043c.366-.22.797-.394.797-.394s-.123.156-.268.358c.277-.002.838.012 1.056.037 1.285.028 1.552-1.374 2.045-1.55.618-.22.894-.353 1.947.68.903.888 1.609 2.477 1.259 2.833-.294.295-.874-.115-1.516-.916a3.466 3.466 0 0 1-.716-1.562 1.533 1.533 0 0 0-.497-.85s.23.51.23.96c0 .246.03 1.165.424 1.68-.039.076-.057.374-.1.43-.458-.554-1.443-.95-1.604-1.067.544.445 1.793 1.468 2.273 2.449.453.927.186 1.777.416 1.997.065.063.976 1.197 1.15 1.767.306.994.019 2.038-.381 2.685l-1.117.174c-.163-.045-.273-.068-.42-.153.08-.143.241-.5.243-.572l-.063-.111c-.348.492-.93.97-1.414 1.245-.633.359-1.363.304-1.838.156-1.348-.415-2.623-1.327-2.93-1.566 0 0-.01.191.048.234.34.383 1.119 1.077 1.872 1.56l-1.605.177.759 5.908c-.337.048-.39.071-.757.124-.325-1.147-.946-1.895-1.624-2.332-.599-.384-1.424-.47-2.214-.314l-.05.059a2.851 2.851 0 0 1 1.863.444c.654.413 1.181 1.481 1.375 2.124.248.822.42 1.7-.248 2.632-.476.662-1.864 1.028-2.986.237.3.481.705.876 1.25.95.809.11 1.577-.03 2.106-.574.452-.464.69-1.434.628-2.456l.714-.104.258 1.834 11.827-1.424zM15.05 6.848c-.034.075-.085.125-.007.37l.004.014.013.032.032.073c.14.287.295.558.552.696.067-.011.136-.019.207-.023.242-.01.395.028.492.08.009-.048.01-.119.005-.222-.018-.364.072-.982-.626-1.308-.264-.122-.634-.084-.757.068a.302.302 0 0 1 .058.013c.186.066.06.13.027.207m1.958 3.392c-.092-.05-.52-.03-.821.005-.574.068-1.193.267-1.328.372-.247.191-.135.523.047.66.511.382.96.638 1.432.575.29-.038.546-.497.728-.914.124-.288.124-.598-.058-.698m-5.077-2.942c.162-.154-.805-.355-1.556.156-.554.378-.571 1.187-.041 1.646.053.046.096.078.137.104a4.77 4.77 0 0 1 1.396-.412c.113-.125.243-.345.21-.745-.044-.542-.455-.456-.146-.749"/></svg><span>Datadog</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M23.02 10.59a8.578 8.578 0 0 0-.862-3.034 8.911 8.911 0 0 0-1.789-2.445c.337-1.342-.413-2.505-.413-2.505-1.292-.08-2.113.4-2.416.62-.052-.02-.102-.044-.154-.064-.22-.089-.446-.172-.677-.247-.231-.073-.47-.14-.711-.197a9.867 9.867 0 0 0-.875-.161C14.557.753 12.94 0 12.94 0c-1.804 1.145-2.147 2.744-2.147 2.744l-.018.093c-.098.029-.2.057-.298.088-.138.042-.275.094-.413.143-.138.055-.275.107-.41.166a8.869 8.869 0 0 0-1.557.87l-.063-.029c-2.497-.955-4.716.195-4.716.195-.203 2.658.996 4.33 1.235 4.636a11.608 11.608 0 0 0-.607 2.635C1.636 12.677.953 15.014.953 15.014c1.926 2.214 4.171 2.351 4.171 2.351.003-.002.006-.002.006-.005.285.509.615.994.986 1.446.156.19.32.371.488.548-.704 2.009.099 3.68.099 3.68 2.144.08 3.553-.937 3.849-1.173a9.784 9.784 0 0 0 3.164.501h.08l.055-.003.107-.002.103-.005.003.002c1.01 1.44 2.788 1.646 2.788 1.646 1.264-1.332 1.337-2.653 1.337-2.94v-.058c0-.02-.003-.039-.003-.06.265-.187.52-.387.758-.6a7.875 7.875 0 0 0 1.415-1.7c1.43.083 2.437-.885 2.437-.885-.236-1.49-1.085-2.216-1.264-2.354l-.018-.013-.016-.013a.217.217 0 0 1-.031-.02c.008-.092.016-.18.02-.27.011-.162.016-.323.016-.48v-.253l-.005-.098-.008-.135a1.891 1.891 0 0 0-.01-.13c-.003-.042-.008-.083-.013-.125l-.016-.124-.018-.122a6.215 6.215 0 0 0-2.032-3.73 6.015 6.015 0 0 0-3.222-1.46 6.292 6.292 0 0 0-.85-.048l-.107.002h-.063l-.044.003-.104.008a4.777 4.777 0 0 0-3.335 1.695c-.332.4-.592.84-.768 1.297a4.594 4.594 0 0 0-.312 1.817l.003.091c.005.055.007.11.013.164a3.615 3.615 0 0 0 .698 1.82 3.53 3.53 0 0 0 1.827 1.282c.33.098.66.14.971.137.039 0 .078 0 .114-.002l.063-.003c.02 0 .041-.003.062-.003.034-.002.065-.007.099-.01.007 0 .018-.003.028-.003l.031-.005.06-.008a1.18 1.18 0 0 0 .112-.02c.036-.008.072-.013.109-.024a2.634 2.634 0 0 0 .914-.415c.028-.02.056-.041.085-.065a.248.248 0 0 0 .039-.35.244.244 0 0 0-.309-.06l-.078.042c-.09.044-.184.083-.283.116a2.476 2.476 0 0 1-.475.096c-.028.003-.054.006-.083.006l-.083.002c-.026 0-.054 0-.08-.002l-.102-.006h-.012l-.024.006c-.016-.003-.031-.003-.044-.006-.031-.002-.06-.007-.091-.01a2.59 2.59 0 0 1-.724-.213 2.557 2.557 0 0 1-.667-.438 2.52 2.52 0 0 1-.805-1.475 2.306 2.306 0 0 1-.029-.444l.006-.122v-.023l.002-.031c.003-.021.003-.04.005-.06a3.163 3.163 0 0 1 1.352-2.29 3.12 3.12 0 0 1 .937-.43 2.946 2.946 0 0 1 .776-.101h.06l.07.002.045.003h.026l.07.005a4.041 4.041 0 0 1 1.635.49 3.94 3.94 0 0 1 1.602 1.662 3.77 3.77 0 0 1 .397 1.414l.005.076.003.075c.002.026.002.05.002.075 0 .024.003.052 0 .07v.065l-.002.073-.008.174a6.195 6.195 0 0 1-.08.639 5.1 5.1 0 0 1-.267.927 5.31 5.31 0 0 1-.624 1.13 5.052 5.052 0 0 1-3.237 2.014 4.82 4.82 0 0 1-.649.066l-.039.003h-.287a6.607 6.607 0 0 1-1.716-.265 6.776 6.776 0 0 1-3.4-2.274 6.75 6.75 0 0 1-.746-1.15 6.616 6.616 0 0 1-.714-2.596l-.005-.083-.002-.02v-.056l-.003-.073v-.096l-.003-.104v-.07l.003-.163c.008-.22.026-.45.054-.678a8.707 8.707 0 0 1 .28-1.355c.128-.444.286-.872.473-1.277a7.04 7.04 0 0 1 1.456-2.1 5.925 5.925 0 0 1 .953-.763c.169-.111.343-.213.524-.306.089-.05.182-.091.273-.135.047-.02.093-.042.138-.062a7.177 7.177 0 0 1 .714-.267l.145-.045c.049-.015.098-.026.148-.041.098-.029.197-.052.296-.076.049-.013.1-.02.15-.033l.15-.032.151-.028.076-.013.075-.01.153-.024c.057-.01.114-.013.171-.023l.169-.021c.036-.003.073-.008.106-.01l.073-.008.036-.003.042-.002c.057-.003.114-.008.171-.01l.086-.006h.023l.037-.003.145-.007a7.999 7.999 0 0 1 1.708.125 7.917 7.917 0 0 1 2.048.68 8.253 8.253 0 0 1 1.672 1.09l.09.077.089.078c.06.052.114.107.171.159.057.052.112.106.166.16.052.055.107.107.159.164a8.671 8.671 0 0 1 1.41 1.978c.012.026.028.052.04.078l.04.078.075.156c.023.051.05.1.07.153l.065.15a8.848 8.848 0 0 1 .45 1.34.19.19 0 0 0 .201.142.186.186 0 0 0 .172-.184c.01-.246.002-.532-.024-.856z"/></svg><span>Grafana Cloud</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M9.854 14.5 5 9.647.854 5.5A.5.5 0 0 0 0 5.854V8.44a.5.5 0 0 0 .146.353L5 13.647l.147.146L9.854 18.5l.146.147v-.049c.065.03.134.049.207.049h2.586a.5.5 0 0 0 .353-.854L9.854 14.5zm0-5-4-4a.487.487 0 0 0-.409-.144.515.515 0 0 0-.356.21.493.493 0 0 0-.089.288V8.44a.5.5 0 0 0 .147.353l9 9a.5.5 0 0 0 .853-.354v-2.585a.5.5 0 0 0-.146-.354l-5-5zm1-4a.5.5 0 0 0-.854.354V8.44a.5.5 0 0 0 .147.353l4 4a.5.5 0 0 0 .853-.354V9.854a.5.5 0 0 0-.146-.354l-4-4zm12.647 11.515a3.863 3.863 0 0 1-2.232-1.1l-4.708-4.707a.5.5 0 0 0-.854.354v6.585a.5.5 0 0 0 .5.5H23.5a.5.5 0 0 0 .5-.5v-.6c0-.276-.225-.497-.499-.532zm-5.394.032a.8.8 0 1 1 0-1.6.8.8 0 0 1 0 1.6zM.854 15.5a.5.5 0 0 0-.854.354v2.293a.5.5 0 0 0 .5.5h2.293c.222 0 .39-.135.462-.309a.493.493 0 0 0-.109-.545L.854 15.501zM5 14.647.854 10.5a.5.5 0 0 0-.854.353v2.586a.5.5 0 0 0 .146.353L4.854 18.5l.146.147h2.793a.5.5 0 0 0 .353-.854L5 14.647z"/></svg><span>PostHog</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M16.5088 16.8447c.1475-.5068.0908-.9707-.1553-1.3154-.2246-.3164-.6045-.499-1.0615-.5205l-8.6592-.1123a.1559.1559 0 0 1-.1333-.0713c-.0283-.042-.0351-.0986-.021-.1553.0278-.084.1123-.1484.2036-.1562l8.7359-.1123c1.0351-.0489 2.1601-.8868 2.5537-1.9136l.499-1.3013c.0215-.0561.0293-.1128.0147-.168-.5625-2.5463-2.835-4.4453-5.5499-4.4453-2.5039 0-4.6284 1.6177-5.3876 3.8614-.4927-.3658-1.1187-.5625-1.794-.499-1.2026.119-2.1665 1.083-2.2861 2.2856-.0283.31-.0069.6128.0635.894C1.5683 13.171 0 14.7754 0 16.752c0 .1748.0142.3515.0352.5273.0141.083.0844.1475.1689.1475h15.9814c.0909 0 .1758-.0645.2032-.1553l.12-.4268zm2.7568-5.5634c-.0771 0-.1611 0-.2383.0112-.0566 0-.1054.0415-.127.0976l-.3378 1.1744c-.1475.5068-.0918.9707.1543 1.3164.2256.3164.6055.498 1.0625.5195l1.8437.1133c.0557 0 .1055.0263.1329.0703.0283.043.0351.1074.0214.1562-.0283.084-.1132.1485-.204.1553l-1.921.1123c-1.041.0488-2.1582.8867-2.5527 1.914l-.1406.3585c-.0283.0713.0215.1416.0986.1416h6.5977c.0771 0 .1474-.0489.169-.126.1122-.4082.1757-.837.1757-1.2803 0-2.6025-2.125-4.727-4.7344-4.727"/></svg><span>Cloudflare</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg><span>Stripe</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12.025 1.13c-5.77 0-10.449 4.647-10.449 10.378 0 1.112.178 2.181.503 3.185.064-.222.203-.444.416-.577a.96.96 0 0 1 .524-.15c.293 0 .584.124.84.284.278.173.48.408.71.694.226.282.458.611.684.951v-.014c.017-.324.106-.622.264-.874s.403-.487.762-.543c.3-.047.596.06.787.203s.31.313.4.467c.15.257.212.468.233.542.01.026.653 1.552 1.657 2.54.616.605 1.01 1.223 1.082 1.912.055.537-.096 1.059-.38 1.572.637.121 1.294.187 1.967.187.657 0 1.298-.063 1.921-.178-.287-.517-.44-1.041-.384-1.581.07-.69.465-1.307 1.081-1.913 1.004-.987 1.647-2.513 1.657-2.539.021-.074.083-.285.233-.542.09-.154.208-.323.4-.467a1.08 1.08 0 0 1 .787-.203c.359.056.604.29.762.543s.247.55.265.874v.015c.225-.34.457-.67.683-.952.23-.286.432-.52.71-.694.257-.16.547-.284.84-.285a.97.97 0 0 1 .524.151c.228.143.373.388.43.625l.006.04a10.3 10.3 0 0 0 .534-3.273c0-5.731-4.678-10.378-10.449-10.378M8.327 6.583a1.5 1.5 0 0 1 .713.174 1.487 1.487 0 0 1 .617 2.013c-.183.343-.762-.214-1.102-.094-.38.134-.532.914-.917.71a1.487 1.487 0 0 1 .69-2.803m7.486 0a1.487 1.487 0 0 1 .689 2.803c-.385.204-.536-.576-.916-.71-.34-.12-.92.437-1.103.094a1.487 1.487 0 0 1 .617-2.013 1.5 1.5 0 0 1 .713-.174m-10.68 1.55a.96.96 0 1 1 0 1.921.96.96 0 0 1 0-1.92m13.838 0a.96.96 0 1 1 0 1.92.96.96 0 0 1 0-1.92M8.489 11.458c.588.01 1.965 1.157 3.572 1.164 1.607-.007 2.984-1.155 3.572-1.164.196-.003.305.12.305.454 0 .886-.424 2.328-1.563 3.202-.22-.756-1.396-1.366-1.63-1.32q-.011.001-.02.006l-.044.026-.01.008-.03.024q-.018.017-.035.036l-.032.04a1 1 0 0 0-.058.09l-.014.025q-.049.088-.11.19a1 1 0 0 1-.083.116 1.2 1.2 0 0 1-.173.18q-.035.029-.075.058a1.3 1.3 0 0 1-.251-.243 1 1 0 0 1-.076-.107c-.124-.193-.177-.363-.337-.444-.034-.016-.104-.008-.2.022q-.094.03-.216.087-.06.028-.125.063l-.13.074q-.067.04-.136.086a3 3 0 0 0-.135.096 3 3 0 0 0-.26.219 2 2 0 0 0-.12.121 2 2 0 0 0-.106.128l-.002.002a2 2 0 0 0-.09.132l-.001.001a1.2 1.2 0 0 0-.105.212q-.013.036-.024.073c-1.139-.875-1.563-2.317-1.563-3.203 0-.334.109-.457.305-.454m.836 10.354c.824-1.19.766-2.082-.365-3.194-1.13-1.112-1.789-2.738-1.789-2.738s-.246-.945-.806-.858-.97 1.499.202 2.362c1.173.864-.233 1.45-.685.64-.45-.812-1.683-2.896-2.322-3.295s-1.089-.175-.938.647 2.822 2.813 2.562 3.244-1.176-.506-1.176-.506-2.866-2.567-3.49-1.898.473 1.23 2.037 2.16c1.564.932 1.686 1.178 1.464 1.53s-3.675-2.511-4-1.297c-.323 1.214 3.524 1.567 3.287 2.405-.238.839-2.71-1.587-3.216-.642-.506.946 3.49 2.056 3.522 2.064 1.29.33 4.568 1.028 5.713-.624m5.349 0c-.824-1.19-.766-2.082.365-3.194 1.13-1.112 1.789-2.738 1.789-2.738s.246-.945.806-.858.97 1.499-.202 2.362c-1.173.864.233 1.45.685.64.451-.812 1.683-2.896 2.322-3.295s1.089-.175.938.647-2.822 2.813-2.562 3.244 1.176-.506 1.176-.506 2.866-2.567 3.49-1.898-.473 1.23-2.037 2.16c-1.564.932-1.686 1.178-1.464 1.53s3.675-2.511 4-1.297c.323 1.214-3.524 1.567-3.287 2.405.238.839 2.71-1.587 3.216-.642.506.946-3.49 2.056-3.522 2.064-1.29.33-4.568 1.028-5.713-.624"/></svg><span>Hugging Face</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M12.914 2.904V16.29L24 2.905H12.914zM0 2.906C0 5.966 2.483 8.45 5.543 8.45s5.542-2.484 5.543-5.544H0zm11.086 4.807L0 21.096h11.086V7.713zm7.37 7.84c-3.063 0-5.542 2.48-5.542 5.543H24c0-3.06-2.48-5.543-5.543-5.543z"/></svg><span>Zendesk</span></li>
+      
+      <li class="integration"><span>ServiceNow</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg><span>Shopify</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M11.992 1.966c-.434 0-.87.086-1.28.257L1.779 5.917c-.503.208-.49.908.012 1.116l8.982 3.558a3.266 3.266 0 0 0 2.454 0l8.982-3.558c.503-.196.503-.908.012-1.116l-8.957-3.694a3.255 3.255 0 0 0-1.272-.257zM23.4 8.056a.589.589 0 0 0-.222.045l-10.012 3.877a.612.612 0 0 0-.38.564v8.896a.6.6 0 0 0 .821.552L23.62 18.1a.583.583 0 0 0 .38-.551V8.653a.6.6 0 0 0-.6-.596zM.676 8.095a.644.644 0 0 0-.48.19C.086 8.396 0 8.53 0 8.69v8.355c0 .442.515.737.908.54l6.27-3.006.307-.147 2.969-1.436c.466-.22.43-.908-.061-1.092L.883 8.138a.57.57 0 0 0-.207-.044z"/></svg><span>Airtable</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M2 18.439l3.69-2.828c1.961 2.56 4.044 3.739 6.363 3.739 2.307 0 4.33-1.166 6.203-3.704L22 18.405C19.298 22.065 15.941 24 12.053 24 8.178 24 4.788 22.078 2 18.439zM12.04 6.15l-6.568 5.66-3.036-3.52L12.055 0l9.543 8.296-3.05 3.509z"/></svg><span>ClickUp</span></li>
+      
+      <li class="integration"><svg class="logo" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M9.517 3.31h4.966v6.621h3.31L12 16.552 6.207 9.931h3.31V3.31zM0 19.034h24v1.655H0v-1.655z"/></svg><span>Docusign</span></li>
+      
+      <li class="integration"><span>Workday</span></li>
+      
+    </ul>
+    <div class="harnesses">
+      <h3 id="harnesses-title">Request-level control for the agent harnesses you run</h3>
+      <ul class="harness-list" aria-labelledby="harnesses-title">
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Claude Code</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Cursor</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Codex</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+OpenClaw</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Hermes</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+OpenCode</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Pi</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Goose</li>
+        
+        <li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Aider</li>
+        
+      </ul>
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="console-title">
+    <h2 id="console-title" class="section-heading"><span>Manage centrally.</span> <span>Enforce locally.</span></h2>
+    <p class="section-copy">Set policies for the servers running your AI agents from one console. Share policies across servers or define different boundaries, and review outbound activity and policy decisions in one place.</p>
+    <figure class="console-figure">
+      <div class="console-window">
+        <div class="console-bar"><span>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M4 5h12M4 10h12M4 15h12M7 3v4m6 1v4m-5 1v4"/>
+  
+</svg>
+Central console</span></div>
+        <table class="console-machines">
+          <caption class="sr-only">Example servers, policies and illustrative last activity.</caption>
+          <thead><tr><th scope="col">Server</th><th scope="col">Policy</th><th scope="col">Last activity</th></tr></thead>
+          <tbody>
+            
+            <tr>
+              <th scope="row"><div class="console-machine">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <rect x="2.5" y="3" width="15" height="10" rx="2"/><path d="M10 13v4m-4 0h8"/>
+  
+</svg>
+<code>agents-prod-01</code></div></th>
+              <td><span class="console-policy">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M4 5h12M4 10h12M4 15h12M7 3v4m6 1v4m-5 1v4"/>
+  
+</svg>
+Production</span></td>
+              <td class="console-activity">2m ago</td>
+            </tr>
+            
+            <tr>
+              <th scope="row"><div class="console-machine">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <rect x="2.5" y="3" width="15" height="10" rx="2"/><path d="M10 13v4m-4 0h8"/>
+  
+</svg>
+<code>agents-prod-02</code></div></th>
+              <td><span class="console-policy">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M4 5h12M4 10h12M4 15h12M7 3v4m6 1v4m-5 1v4"/>
+  
+</svg>
+Production</span></td>
+              <td class="console-activity">8m ago</td>
+            </tr>
+            
+            <tr>
+              <th scope="row"><div class="console-machine">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <rect x="2.5" y="3" width="15" height="10" rx="2"/><path d="M10 13v4m-4 0h8"/>
+  
+</svg>
+<code>agents-staging-01</code></div></th>
+              <td><span class="console-policy">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M4 5h12M4 10h12M4 15h12M7 3v4m6 1v4m-5 1v4"/>
+  
+</svg>
+Staging</span></td>
+              <td class="console-activity">1h ago</td>
+            </tr>
+            
+          </tbody>
+        </table>
+        <div class="console-enforcement">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Policy enforced on each server</div>
+      </div>
+    </figure>
+  </section>
+
+  <section class="section wrap" id="features" aria-labelledby="features-title">
+    <h2 id="features-title" class="section-heading">Built for the way agents run</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <span class="feature-icon">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M11 2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10V6l-4-4Zm0 0v4h4M6 8h5M6 11h2m1 3 2 2 4-4"/>
+  
+</svg>
+</span>
+        <h3>Per request, not per domain</h3>
+        <p>Decide on the method, path and body of each HTTPS request, so shared services like GitHub stay usable without becoming a way out.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M7 3h9v9M13 13h-2M4 9V6m4 0h4M2 2l16 16"/><circle cx="7" cy="12" r="2.5"/><path d="m5.5 14-.5 3 2-1 2 1-.5-3"/>
+  
+</svg>
+</span>
+        <h3>No CA, no proxy</h3>
+        <p>No interception certificates to create, distribute or rotate, and no custom trust store to configure per tool. Certificate pinning stays intact on supported tools and TLS stacks.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <rect x="2.5" y="3" width="15" height="10" rx="2"/><path d="M10 13v4m-4 0h8m-7-9 2 2 4-4"/>
+  
+</svg>
+</span>
+        <h3>A policy per server</h3>
+        <p>Give servers different boundaries, or deliberately share a policy. Allowing a site for one server does not have to open it for the others.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <rect x="2" y="10" width="16" height="7" rx="1"/><rect x="5" y="3" width="11" height="7" rx="1"/><path d="M6 12.5v2M10 12.5v2M14 12.5v2M9 5.5v2M12 5.5v2"/>
+  
+</svg>
+</span>
+        <h3>Covers container workloads</h3>
+        <p>Inspect supported container traffic from the host, with nothing baked into your images. Coverage depends on the tools and TLS stacks inside.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M3 8a7 7 0 0 1 14 0v2M3 11c0 2-.3 3.2-1 4.5M5.5 9a4.5 4.5 0 0 1 9 0v2c0 2.5-.4 4.7-1.2 6.5M5.5 12c-.1 1.8-.5 3.5-1.3 5M8 10V9a2 2 0 0 1 4 0v2c0 2.6-.5 5-1.4 7M8 13c-.2 1.7-.6 3.3-1.3 4.8M17 13c-.1 1.2-.3 2.4-.6 3.5"/>
+  
+</svg>
+</span>
+        <h3>Knows which process asked</h3>
+        <p>See process context alongside outbound activity and policy decisions, not just an IP and a port.</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m2 2 16 16M7.5 5.4C8.3 5.1 9.1 5 10 5c5 0 8 5 8 5a15 15 0 0 1-2.7 3.2M4.7 6.8A15 15 0 0 0 2 10s3 5 8 5c.9 0 1.7-.1 2.5-.4"/><path d="M8.2 8.2a2.55 2.55 0 0 0 3.6 3.6"/>
+  
+</svg>
+</span>
+        <h3>Payloads stay local</h3>
+        <p>Requests are inspected where the agent runs, not sent elsewhere for inspection. Activity metadata is reported centrally, but there is no separate inspection service in the traffic path.</p>
+      </div>
+    </div>
+    <p class="features-links"><a href="/compare/network-firewall">Bullfrog Egress Control vs network firewalls</a><a href="/compare/mitm-proxy">Bullfrog Egress Control vs MITM proxies</a></p>
+  </section>
+
+  <section class="section wrap" id="install" aria-labelledby="workflow-title">
+    <div class="workflow-intro">
+      <h2 id="workflow-title" class="section-heading"><span>Simple to install.</span> <span>Simple to manage.</span></h2>
+      <ul class="benefits"><li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+No proxy</li><li>
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+No custom CA</li></ul>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <div class="step-copy">
+          <div class="step-heading"><span class="step-number">1</span><h3>Install</h3></div>
+          <p>Deploy Bullfrog on the servers running your AI agents.</p>
+        </div>
+        <div class="product-detail terminal-detail" role="img" aria-label="Installation illustration: apt install bullfrog. Ubuntu / Debian.">
+          <div class="detail-header">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 6 4 4-4 4m6 0h4"/>
+  
+</svg>
+<span>Terminal</span></div>
+          <div class="terminal-command"><span class="prompt" aria-hidden="true">$</span><code>apt install <strong>bullfrog</strong></code></div>
+          <div class="terminal-platform">Ubuntu / Debian</div>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-copy">
+          <div class="step-heading"><span class="step-number">2</span><h3>Set policy</h3></div>
+          <p>Define policies for outbound requests and remote MCP tools in one central console.</p>
+        </div>
+        <div class="product-detail policy-detail" role="img" aria-label="Example policy summary: allow package downloads and sending to approved accounts; block sending to other accounts. These represent configured service rules.">
+          <div class="detail-header">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="M4 5h12M4 10h12M4 15h12M7 3v4m6 1v4m-5 1v4"/>
+  
+</svg>
+<span>Your policy</span></div>
+          <dl class="policy-summary">
+            <div><dt>Download packages</dt><dd class="decision-allow">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allow</dd></div>
+            <div><dt>Send to approved accounts</dt><dd class="decision-allow">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m5 10 3.3 3.4L15.5 6"/>
+  
+</svg>
+Allow</dd></div>
+            <div><dt>Send to other accounts</dt><dd class="decision-block">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Block</dd></div>
+          </dl>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-copy">
+          <div class="step-heading"><span class="step-number">3</span><h3>Govern</h3></div>
+          <p>See outbound activity and policy decisions across your servers from the same console.</p>
+        </div>
+        <div class="product-detail decision-detail" role="img" aria-label="Example blocked request. Destination: unapproved account. Application: curl.">
+          <div class="detail-header"><span>Request details</span><span class="status block">
+<svg class="icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+  <path d="m6 6 8 8M14 6l-8 8"/>
+  
+</svg>
+Blocked</span></div>
+          <dl class="decision-fields">
+            <div><dt>Destination</dt><dd>Unapproved account</dd></div>
+            <div><dt>Application</dt><dd><code>curl</code></dd></div>
+          </dl>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="cta-band" id="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <h2 id="contact-title" class="section-heading">See where your agents send data.</h2>
+      <a class="cta" href="mailto:info@bullfrogsec.com">Get in touch</a>
+    </div>
+  </section>
+</main>
+  <footer class="site-footer wrap">
+  <div class="footer-main">
+    <div>
+      <a class="wordmark" href="/" aria-label="Bullfrog Security home"><img src="/assets/images/logo.svg?v=6d8b1fad2be3" width="25" height="25" alt=""><span>Bullfrog Security</span></a>
+      <p>Security for AI agents.</p>
+      <p class="contact-line">Contact us at <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a></p>
+
+    </div>
+    <div><h2>Services</h2><a href="/assessment">Agent security assessment</a><a href="/training">Training</a></div>
+    <div><h2>Product</h2><a href="/egress-control">Bullfrog Egress Control</a></div>
+    <div><h2>Company</h2><a href="/team">The team</a><a href="/blog">Blog</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Bullfrog</span>
+    <div><a href="/privacy">Privacy</a><a href="/terms">Terms</a></div>
+  </div>
+  <noscript><p class="no-script-note">Chat is off without JavaScript. Contact <a href="mailto:info@bullfrogsec.com">info@bullfrogsec.com</a>.</p></noscript>
+</footer>
+
+  <button type="button" class="chat-launcher cta" data-chat hidden>Chat with us</button>
+</body>
+</html>
